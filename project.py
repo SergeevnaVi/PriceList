@@ -1,5 +1,6 @@
 import os
 import json
+import csv
 
 
 class PriceMachine():
@@ -28,11 +29,42 @@ class PriceMachine():
                 масса
                 фасовка
         '''
-        
-    def _search_product_price_weight(self, headers):
-        '''
-            Возвращает номера столбцов
-        '''
+        files = [file_name for file_name in os.listdir() if 'price' in file_name and file_name.endswith('.csv')]
+
+        for file_name in files:
+            try:
+                with open(file_name, 'r', encoding='utf-8') as f:
+                    reader_file = csv.DictReader(f)
+
+                    product_headers = ['название', 'продукт', 'товар', 'наименование']
+                    price_headers = ['цена', 'розница']
+                    weight_headers = ['вес', 'масса', 'фасовка']
+
+                    product_col = None
+                    price_col = None
+                    weight_col = None
+
+                    for header in reader_file.fieldnames:
+                        if any(product in header.lower() for product in product_headers):
+                            product_col = header
+                        elif any(price in header.lower() for price in price_headers):
+                            price_col = header
+                        elif any(weight in header.lower() for weight in weight_headers):
+                            weight_col = header
+
+                    for row in reader_file:
+                        pass
+
+                    if product_col and price_col and weight_col:
+                        break
+
+                if not product_col or not price_col or not weight_col:
+                    print(f'В файле {file_name} отсутствуют нужные столбцы.')
+                    continue
+
+            except Exception as e:
+                print(f'Ошибка при обработке файла {file_name}: {e}')
+
 
     def export_to_html(self, fname='output.html'):
         result = '''
@@ -54,6 +86,7 @@ class PriceMachine():
         '''
     
     def find_text(self, text):
+        pass
 
     
 pm = PriceMachine()
