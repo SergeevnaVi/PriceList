@@ -53,10 +53,20 @@ class PriceMachine():
                             weight_col = header
 
                     for row in reader_file:
-                        pass
+                        product = row.get(product_col)
+                        price = float(row.get(price_col, 0))
+                        weight = float(row.get(weight_col, 0))
 
-                    if product_col and price_col and weight_col:
-                        break
+                        if product and price > 0 and weight > 0:
+                            price_kg = price / weight
+
+                            self.data.append({
+                                'product': product,
+                                'price': price,
+                                'weight': weight,
+                                'file_name': file_name,
+                                'price_kg': price_kg,
+                            })
 
                 if not product_col or not price_col or not weight_col:
                     print(f'В файле {file_name} отсутствуют нужные столбцы.')
@@ -84,9 +94,33 @@ class PriceMachine():
                     <th>Цена за кг.</th>
                 </tr>
         '''
-    
+
+        for index, item in enumerate(self.data):
+            result += f'''
+                <tr>
+                    <td>{index + 1}</td>
+                    <td>{item['product']}</td>
+                    <td>{item['price']}</td>
+                    <td>{item['weight']}</td>
+                    <td>{item['file_name']}</td>
+                    <td>{item['price_kg']}</td>
+                </tr>
+            '''
+
+        result += '''
+            </table>
+        </body>
+        </html>
+        '''
+
+        with open(fname, 'w', encoding='utf-8') as file:
+            file.write(result)
+
+
     def find_text(self, text):
         pass
+
+
 
     
 pm = PriceMachine()
